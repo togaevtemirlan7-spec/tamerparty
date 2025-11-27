@@ -1,82 +1,53 @@
 import React, { useState } from "react";
-import { createClient } from "@supabase/supabase-js";
-import QRCode from "qrcode.react";
-
-const supabase = createClient(
-  import.meta.env.VITE_SUPABASE_URL,
-  import.meta.env.VITE_SUPABASE_ANON_KEY
-);
+import { supabase } from "./supabase.js";
 
 export default function Register() {
   const [form, setForm] = useState({
     name: "",
     age: "",
     instagram: "",
-    gender: "M",
+    gender: "",
     comment: "",
   });
 
-  const [created, setCreated] = useState(null);
+  const [successId, setSuccessId] = useState(null);
 
-  const handle = (e) =>
-    setForm({ ...form, [e.target.name]: e.target.value });
-
-  const submit = async (e) => {
-    e.preventDefault();
-
+  async function sendForm() {
     const { data, error } = await supabase
       .from("guests")
-      .insert([{
-        name: form.name,
-        age: form.age,
-        instagram: form.instagram,
-        gender: form.gender,
-        comment: form.comment
-      }])
-      .select()
-      .single();
+      .insert([form])
+      .select("id");
 
     if (error) {
-      alert("Ошибка: " + error.message);
-      return;
+      alert("Ошибка!");
+      console.log(error);
+    } else {
+      setSuccessId(data[0].id);
     }
+  }
 
-    const url = `${window.location.origin}/p/${data.id}`;
-    setCreated({ id: data.id, url });
-  };
+  if (successId) {
+    return (
+      <div className="container">
+        <h1>Готово!</h1>
+        <p>Ваш QR-код:</p>
+        <img src={`https://api.qrserver.com/v1/create-qr-code/?size=300x300&data=${successId}`} />
+      </div>
+    );
+  }
 
   return (
-    <div className="card">
-      <h2>Регистрация</h2>
+    <div className="container">
+      <h1>TamerParty</h1>
 
-      {!created && (
-        <form onSubmit={submit} className="form">
-          <input name="name" placeholder="Имя" onChange={handle} required />
-          <input name="age" placeholder="Возраст" onChange={handle} />
-          <input name="instagram" placeholder="Instagram (без @)" onChange={handle} />
+      <input placeholder="Имя" onChange={e => setForm({...form, name: e.target.value})} />
+      <input placeholder="Возраст" onChange={e => setForm({...form, age: e.target.value})} />
+      <input placeholder="Instagram" onChange={e => setForm({...form, instagram: e.target.value})} />
+      <input placeholder="Пол (м/ж)" onChange={e => setForm({...form, gender: e.target.value})} />
+      <input placeholder="Комментарий" onChange={e => setForm({...form, comment: e.target.value})} />
 
-          <label>
-            Пол:
-            <div>
-              <label><input type="radio" name="gender" value="M" defaultChecked /> М</label>
-              <label><input type="radio" name="gender" value="F" /> Ж</label>
-            </div>
-          </label>
-
-          <textarea name="comment" placeholder="Комментарий" onChange={handle} />
-
-          <button className="btn gold">Получить QR</button>
-        </form>
-      )}
-
-      {created && (
-        <div className="result">
-          <p>Ваш QR-код:</p>
-          <QRCode value={created.url} size={220} />
-
-          <a href={created.url} className="btn">Открыть профиль</a>
-        </div>
-      )}
+      <button onClick={sendForm}>Готово</button>
     </div>
   );
 }
+
