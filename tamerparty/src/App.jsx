@@ -1,14 +1,17 @@
 import React from "react";
-import { Link } from "react-router-dom";
+import { BrowserRouter, Routes, Route } from "react-router-dom";
+import Register from "./Register.jsx";
+import Admin from "./Admin.jsx";
+import PersonPage from "./PersonPage.jsx";
 
 export default function App() {
   return (
-    <div className="page">
-      <h1 className="title">TamerParty</h1>
-      <p className="subtitle">Премиальная регистрация гостей</p>
-
-      <Link to="/register" className="btn">Заполнить данные</Link>
-      <Link to="/admin" className="btn-outline">Админ-панель</Link>
-    </div>
+    <BrowserRouter>
+      <Routes>
+        <Route path="/" element={<Register />} />
+        <Route path="/admin" element={<Admin />} />
+        <Route path="/guest/:id" element={<PersonPage />} />
+      </Routes>
+    </BrowserRouter>
   );
 }
