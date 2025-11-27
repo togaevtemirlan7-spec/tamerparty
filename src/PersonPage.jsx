@@ -1,31 +1,30 @@
-import { useEffect, useState } from "react";
-import { supabase } from "./supabaseClient";
+import { useLocation } from "react-router-dom";
 
-export default function PersonPage({ id }) {
-  const [guest, setGuest] = useState(null);
-
-  useEffect(() => {
-    async function loadGuest() {
-      const { data } = await supabase
-        .from("guests")
-        .select("*")
-        .eq("id", id)
-        .single();
-
-      setGuest(data);
-    }
-    loadGuest();
-  }, [id]);
+export default function PersonPage() {
+  const location = useLocation();
+  const guest = location.state?.guest;
 
   if (!guest) {
-    return <h2 style={{ textAlign: "center", paddingTop: "30px" }}>Загрузка...</h2>;
+    return <h2>Гость не найден</h2>;
   }
 
   return (
     <div className="container">
-      <h1>Гость</h1>
+      <h1>{guest.name}</h1>
 
-      <div className="admin-list">
-        <p><b>Имя:</b> {guest.name}</p>
-        <p><b>Возраст:</b> {guest.age}</p>
-        <p><b>Instagram:</b> @{guest.
+      <p><b>Возраст:</b> {guest.age}</p>
+
+      <p>
+        <b>Instagram:</b> @{guest.instagram}
+      </p>
+
+      <img
+        src={guest.photo}
+        alt="Фото гостя"
+        style={{ width: "200px", borderRadius: "10px" }}
+      />
+
+      <p>{guest.comment}</p>
+    </div>
+  );
+}
