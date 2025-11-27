@@ -1,40 +1,52 @@
-import { useEffect, useState } from "react";
-import supabase from "../supabase";
+import React, { useState } from "react";
+import { supabase } from "./supabase.js";
+import QrScanner from "qr-scanner";
 
 export default function Admin() {
-  const [guests, setGuests] = useState([]);
+  const [guest, setGuest] = useState(null);
 
-  useEffect(() => {
-    loadGuests();
-  }, []);
+  async function handleScan(result) {
+    const id = result.data;
 
-  async function loadGuests() {
-    const { data, error } = await supabase.from("guests").select("*");
-    if (!error) setGuests(data);
+    const { data } = await supabase.from("guests").select("*").eq("id", id);
+
+    if (data.length > 0) {
+      setGuest(data[0]);
+    }
   }
 
   return (
     <div className="container">
       <h1>Админ панель</h1>
 
-      <div className="guest-list">
-        {guests.map((g) => (
-          <div key={g.id} className="guest-card">
-            <p><b>Имя:</b> {g.name}</p>
-            <p><b>Возраст:</b> {g.age}</p>
-            <p><b>Instagram:</b> {g.instagram}</p>
-            <p><b>Пол:</b> {g.gender}</p>
-            <p><b>Комментарий:</b> {g.comment}</p>
-            <p><b>Дата:</b> {g.created_at}</p>
+      <p>Сканируй QR:</p>
 
-            <img 
-              src={g.photo} 
-              alt="photo" 
-              style={{ width: "120px", borderRadius: "8px" }} 
-            />
-          </div>
-        ))}
-      </div>
+      <video
+        id="scanner"
+        style={{ width: "300px", border: "2px solid gold" }}
+      ></video>
+
+      <button
+        onClick={async () => {
+          const video = document.getElementById("scanner");
+          const scanner = new QrScanner(video, handleScan);
+          scanner.start();
+        }}
+      >
+        Включить сканер
+      </button>
+
+      {guest && (
+        <div className="card">
+          <h2>{guest.name}</h2>
+          <p>Возраст: {guest.age}</p>
+          <p>Instagram: {guest.instagram}</p>
+          <p>Пол: {guest.gender}</p>
+          <p>Комментарий: {guest.comment}</p>
+        </div>
+      )}
     </div>
   );
 }
+
+
