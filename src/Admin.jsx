@@ -1,3 +1,9 @@
+if (localStorage.getItem("admin") !== "yes") {
+  window.location.href = "/login";
+  return null;
+}
+
+
 import { useEffect, useState } from "react";
 import supabase from "../supabase";
 
@@ -38,3 +44,4 @@ export default function Admin() {
     </div>
   );
 }
+
