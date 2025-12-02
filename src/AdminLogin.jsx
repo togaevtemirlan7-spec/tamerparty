@@ -1,38 +1,29 @@
 import { useState } from "react";
-import { useNavigate } from "react-router-dom";
 
-export default function AdminLogin() {
-  const [password, setPassword] = useState("");
-  const navigate = useNavigate();
+export default function Login() {
+  const [pass, setPass] = useState("");
 
-  const ADMIN_PASSWORD = "temirlan123"; // ← твой пароль
+  const ADMIN_PASS = "tameradmin"; // 
 
-  function login() {
-    if (password === ADMIN_PASSWORD) {
-      localStorage.setItem("admin", "ok");
-      navigate("/admin");
+  const login = () => {
+    if (pass === ADMIN_PASS) {
+      localStorage.setItem("admin", "yes");
+      window.location.href = "/admin";
     } else {
-      alert("Неверный пароль!");
+      alert("Неверный пароль");
     }
-  }
+  };
 
   return (
     <div className="container">
-      <h1>Вход в админ панель</h1>
-
+      <h1>Вход в админку</h1>
       <input
         type="password"
         placeholder="Пароль"
-        onChange={(e) => setPassword(e.target.value)}
-        style={{ width: "100%", padding: 10, marginTop: 20 }}
+        value={pass}
+        onChange={(e) => setPass(e.target.value)}
       />
-
-      <button
-        onClick={login}
-        style={{ marginTop: 20, width: "100%", padding: 10 }}
-      >
-        Войти
-      </button>
+      <button onClick={login}>Войти</button>
     </div>
   );
 }
