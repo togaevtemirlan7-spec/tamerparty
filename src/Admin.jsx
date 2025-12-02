@@ -1,13 +1,13 @@
-if (localStorage.getItem("admin") !== "yes") {
-  window.location.href = "/login";
-  return null;
-}
-
 
 import { useEffect, useState } from "react";
 import { supabase } from «./supabaseClient»;
 
 export default function Admin() {
+if (localStorage.getItem("admin") !== "yes") {
+  window.location.href = "/login";
+  return null;
+}
+
   const [guests, setGuests] = useState([]);
 
   useEffect(() => {
@@ -44,5 +44,6 @@ export default function Admin() {
     </div>
   );
 }
+
 
 
