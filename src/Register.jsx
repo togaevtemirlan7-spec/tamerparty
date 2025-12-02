@@ -1,80 +1,130 @@
-import React, { useState } from "react";
-import { createClient } from "@supabase/supabase-js";
-import QRCode from "qrcode.react";
-
-const supabase = createClient(
-  import.meta.env.VITE_SUPABASE_URL,
-  import.meta.env.VITE_SUPABASE_ANON_KEY
-);
+import { useState } from "react";
+import { supabase } from "../supabaseClient";
+import { useNavigate } from "react-router-dom";
 
 export default function Register() {
-  const [form, setForm] = useState({
-    name: "",
-    age: "",
-    instagram: "",
-    gender: "M",
-    comment: "",
-  });
+  const navigate = useNavigate();
 
-  const [created, setCreated] = useState(null);
+  const [name, setName] = useState("");
+  const [age, setAge] = useState("");
+  const [instagram, setInstagram] = useState("");
+  const [gender, setGender] = useState("");
+  const [comment, setComment] = useState("");
+  const [photo, setPhoto] = useState("");
+  const [loading, setLoading] = useState(false);
+  const [qrUrl, setQrUrl] = useState("");
 
-  const handle = (e) =>
-    setForm({ ...form, [e.target.name]: e.target.value });
-
-  const submit = async (e) => {
+  async function handleSubmit(e) {
     e.preventDefault();
+    setLoading(true);
 
     const { data, error } = await supabase
-      .from("guests")
-      .insert([{
-        name: form.name,
-        age: form.age,
-        instagram: form.instagram,
-        gender: form.gender,
-        comment: form.comment
-      }])
-      .select()
+      .from("guests1") // ← Если твоя таблица называется guests1
+      .insert([
+        {
+          name,
+          age: Number(age),
+          instagram,
+          gender,
+          comment,
+          photo
+        }
+      ])
+      .select("*")
       .single();
 
+    setLoading(false);
+
     if (error) {
-      alert("Ошибка: " + error.message);
+      alert("Ошибка при отправке данных");
+      console.error(error);
       return;
     }
 
-    const url = `${window.location.origin}/p/${data.id}`;
-    setCreated({ id: data.id, url });
-  };
+    const guestId = data.id;
+    const url = `https://tamerparty.vercel.app/guest/${guestId}`;
+
+    setQrUrl(url);
+  }
 
   return (
-    <div className="card">
-      <h2>Регистрация</h2>
+    <div className="container">
+      <h1>Регистрация на мероприятие</h1>
 
-      {!created && (
-        <form onSubmit={submit} className="form">
-          <input name="name" placeholder="Имя" onChange={handle} required />
-          <input name="age" placeholder="Возраст" onChange={handle} />
-          <input name="instagram" placeholder="Instagram (без @)" onChange={handle} />
+      {!qrUrl && (
+        <form onSubmit={handleSubmit}>
+          <label>Имя</label>
+          <input
+            type="text"
+            required
+            value={name}
+            onChange={(e) => setName(e.target.value)}
+          />
 
-          <label>
-            Пол:
-            <div>
-              <label><input type="radio" name="gender" value="M" defaultChecked /> М</label>
-              <label><input type="radio" name="gender" value="F" /> Ж</label>
-            </div>
-          </label>
+          <label>Возраст</label>
+          <input
+            type="number"
+            required
+            value={age}
+            onChange={(e) => setAge(e.target.value)}
+          />
 
-          <textarea name="comment" placeholder="Комментарий" onChange={handle} />
+          <label>Instagram (без @)</label>
+          <input
+            type="text"
+            required
+            value={instagram}
+            onChange={(e) => setInstagram(e.target.value)}
+          />
 
-          <button className="btn gold">Получить QR</button>
+          <label>Пол</label>
+          <select
+            required
+            value={gender}
+            onChange={(e) => setGender(e.target.value)}
+          >
+            <option value="">Выбери</option>
+            <option value="male">Мужчина</option>
+            <option value="female">Женщина</option>
+          </select>
+
+          <label>Фото (вставь ссылку)</label>
+          <input
+            type="text"
+            placeholder="https://example.com/photo.jpg"
+            required
+            value={photo}
+            onChange={(e) => setPhoto(e.target.value)}
+          />
+
+          <label>Комментарий</label>
+          <textarea
+            value={comment}
+            onChange={(e) => setComment(e.target.value)}
+          ></textarea>
+
+          <button type="submit" disabled={loading}>
+            {loading ? "Отправка..." : "Отправить"}
+          </button>
         </form>
       )}
 
-      {created && (
-        <div className="result">
-          <p>Ваш QR-код:</p>
-          <QRCode value={created.url} size={220} />
+      {qrUrl && (
+        <div style={{ marginTop: 30 }}>
+          <h2>Ваш QR-код</h2>
 
-          <a href={created.url} className="btn">Открыть профиль</a>
+          <img
+            src={`https://api.qrserver.com/v1/create-qr-code/?size=300x300&data=${qrUrl}`}
+            alt="QR Code"
+          />
+
+          <p style={{ marginTop: 20 }}>
+            Сохраните QR-код — он понадобится при входе.
+          </p>
+
+          <button onClick={() => navigate("/")}>
+            Заполнить ещё раз
+          </button>
         </div>
       )}
     </div>
