@@ -1,22 +1,31 @@
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import Register from "./Register";
-import AdminLogin from "./AdminLogin";
 import AdminPage from "./AdminPage";
 import ScannerPage from "./ScannerPage";
+import AdminLogin from "./AdminLogin";
 import PersonPage from "./PersonPage";
 
-function App() {
+export default function App() {
   return (
     <BrowserRouter>
       <Routes>
+
         <Route path="/" element={<Register />} />
-        <Route path="/login" element={<AdminLogin />} />
+
+        {/* Логин админки */}
+        <Route path="/admin-login" element={<AdminLogin />} />
+
+        {/* Админ панель */}
         <Route path="/admin" element={<AdminPage />} />
+
+        {/* Страница сканера */}
         <Route path="/scanner" element={<ScannerPage />} />
-        <Route path="/person" element={<PersonPage />} />
+
+        {/* Страница гостя по QR */}
+        <Route path="/guest/:id" element={<PersonPage />} />
+
       </Routes>
     </BrowserRouter>
   );
 }
 
-export default App;
