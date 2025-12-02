@@ -1,26 +1,22 @@
-import React from "react";
-import { Link } from "react-router-dom";
-
-export default function App() {
-  return (
-    <div className="page">
-      <h1 className="title">TamerParty</h1>
-      <p className="subtitle">Премиальная регистрация гостей</p>
-
-      <Link to="/register" className="btn">Заполнить данные</Link>
-      <Link to="/admin" className="btn-outline">Админ-панель</Link>
-    </div>
-  );
-}
+import { BrowserRouter, Routes, Route } from "react-router-dom";
+import Register from "./Register";
 import AdminLogin from "./AdminLogin";
 import AdminPage from "./AdminPage";
 import ScannerPage from "./ScannerPage";
+import PersonPage from "./PersonPage";
 
-<Route path="/login" element={<AdminLogin />} />
-<Route path="/admin" element={<AdminPage />} />
-<Route path="/scanner" element={<ScannerPage />} />
-import Login from "./Login";
+function App() {
+  return (
+    <BrowserRouter>
+      <Routes>
+        <Route path="/" element={<Register />} />
+        <Route path="/login" element={<AdminLogin />} />
+        <Route path="/admin" element={<AdminPage />} />
+        <Route path="/scanner" element={<ScannerPage />} />
+        <Route path="/person" element={<PersonPage />} />
+      </Routes>
+    </BrowserRouter>
+  );
+}
 
-<Route path="/login" element={<Login />} />
-
-
+export default App;
