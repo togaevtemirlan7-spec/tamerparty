@@ -12,3 +12,11 @@ export default function App() {
     </div>
   );
 }
+import AdminLogin from "./AdminLogin";
+import AdminPage from "./AdminPage";
+import ScannerPage from "./ScannerPage";
+
+<Route path="/login" element={<AdminLogin />} />
+<Route path="/admin" element={<AdminPage />} />
+<Route path="/scanner" element={<ScannerPage />} />
+
