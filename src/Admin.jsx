@@ -5,7 +5,7 @@ if (localStorage.getItem("admin") !== "yes") {
 
 
 import { useEffect, useState } from "react";
-import supabase from "../supabase";
+import { supabase } from «./supabaseClient»;
 
 export default function Admin() {
   const [guests, setGuests] = useState([]);
@@ -44,4 +44,5 @@ export default function Admin() {
     </div>
   );
 }
+
 
