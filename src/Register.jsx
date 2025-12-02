@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { supabase } from "./supabaseClient";
+import { supabase } from "../supabaseClient";
 import { useNavigate } from "react-router-dom";
 
 export default function Register() {
@@ -19,7 +19,7 @@ export default function Register() {
     setLoading(true);
 
     const { data, error } = await supabase
-      .from("guests1") // ← Если твоя таблица называется guests1
+      .from("guests") // 
       .insert([
         {
           name,
@@ -130,4 +130,5 @@ export default function Register() {
     </div>
   );
 }
+
 
