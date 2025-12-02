@@ -19,4 +19,8 @@ import ScannerPage from "./ScannerPage";
 <Route path="/login" element={<AdminLogin />} />
 <Route path="/admin" element={<AdminPage />} />
 <Route path="/scanner" element={<ScannerPage />} />
+import Login from "./Login";
+
+<Route path="/login" element={<Login />} />
+
 
